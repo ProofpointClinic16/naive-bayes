@@ -45,3 +45,4 @@ def tokenize(filename):
 
 def test():
     tokenize('sample.txt')
+    
