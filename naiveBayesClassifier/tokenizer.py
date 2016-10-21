@@ -6,7 +6,7 @@ class Tokenizer(object):
         self.signs_to_remove = signs_to_remove
 
     def tokenize(self,text):
-        return text.lower().split(' ')
+        return text.lower().split('/')
 
     def remove_stop_words(self,token):
         if token in self.stop_words:

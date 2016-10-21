@@ -7,25 +7,16 @@ from naiveBayesClassifier.classifier import Classifier
 
 def classify(filename):
 
-    data = parser.parse(filename)
-
-    trainingSet = []
-
-    for datum in data:
-        dict = {}
-        dict['url'] = datum['url'].replace("/", " ")
-        dict['category'] = datum['results']['result']
-
-        trainingSet += [dict]
+    trainingSet = parser.parse(filename)
 
     trainer = Trainer(tokenizer.Tokenizer(stop_words = [], signs_to_remove = [""]))
 
     for sample in trainingSet:
-        trainer.train(sample['url'], sample['category'])
+        trainer.train(sample['url'], sample['result'])
 
     classifier = Classifier(trainer.data, tokenizer.Tokenizer(stop_words = [], signs_to_remove = [""]))
 
-    newInstance = u'http://wenerdun.com'
+    newInstance = u'https://secure.actblue.com/contribute/page/dcccactblue?amount=25&recurring=true'
 
     print classifier.classify(newInstance)
 
