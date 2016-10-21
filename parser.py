@@ -17,7 +17,17 @@ def parse(filename):
             line = line.replace(")',", ")\",")
             line = line.replace("None", "\"None\"")
             line = line.replace("Object", "\"Object")
+            line = line.replace("True", "\"True\"")
+            line = line.replace("False", "\"False\"")
+            line = line.replace(" ", "")
 
-            data += [json.loads(line)]
+            try:
+                datum = json.loads(line)
+            except ValueError:
+                print "Failed at:"
+                print line
+                continue
+
+            data += [datum]
 
     return data
