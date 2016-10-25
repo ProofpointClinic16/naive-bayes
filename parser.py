@@ -1,4 +1,3 @@
-import json
 import re
 
 
@@ -10,11 +9,11 @@ def parse(filename):
 
             datum = {}
 
-            resultObj = re.search( r"result': u'(.+?)'}", line).group(1)
-            urlObj = re.search( r"url': u'(.+?)', ", line).group(1)
+            result = re.search(r"result': u'(.+?)'}", line).group(1)
+            url = re.search(r"url': u'(.+?)', ", line).group(1)
 
-            datum['url'] = urlObj
-            datum['result'] = resultObj
+            datum['url'] = url
+            datum['result'] = result
 
             data += [datum]
 
