@@ -1,14 +1,14 @@
-import parser
-import make_sets
+import make_balanced_sets
 from pprint import pprint
 from naiveBayesClassifier import tokenizer
 from naiveBayesClassifier.trainer import Trainer
 from naiveBayesClassifier.classifier import Classifier
 
 
+# The size parameter defines how many samples will be in the training/testing set each
 def classify(filename, size):
 
-    trainingSet, testingSet = make_sets.create_sets(filename, size)
+    trainingSet, testingSet = make_balanced_sets.create_sets(filename, size)
 
     trainer = Trainer(tokenizer.Tokenizer(stop_words = [], signs_to_remove = [""]))
 
@@ -47,6 +47,9 @@ def classify(filename, size):
     confusionMatrix = [[mal_mal, clean_mal], [mal_clean, clean_clean]]
 
     pprint(confusionMatrix)
+    print "Accuracy: " + str(mal_mal + clean_clean)
+    print "False positives (predicted clean when malicious): " + str(clean_mal)
+    print "False negatives (predicted malicious when clean): " + str(mal_clean)
 
 
 def test(size):

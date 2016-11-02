@@ -1,6 +1,7 @@
 import re
 from pprint import pprint
 
+# Size is the total number of samples in one data set
 def create_sets(filename, size=10):
 
     training = []
