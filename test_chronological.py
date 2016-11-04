@@ -3,6 +3,7 @@ from pprint import pprint
 from naiveBayesClassifier import tokenizer
 from naiveBayesClassifier.trainer import Trainer
 from naiveBayesClassifier.classifier import Classifier
+from tabulate import tabulate
 
 
 # The size parameter defines how many samples will be in the training/testing set each
@@ -37,19 +38,19 @@ def classify(filename, size):
     	elif predicted == 'clean' and actual == 'malicious':
     		clean_mal += 1
 
-    size = float(size)
+    # size = float(size)
 
-    mal_mal = float(mal_mal)/size
-    mal_clean = float(mal_clean)/size
-    clean_mal = float(clean_mal)/size
-    clean_clean = float(clean_clean)/size
+    # mal_mal = float(mal_mal)/size
+    # mal_clean = float(mal_clean)/size
+    # clean_mal = float(clean_mal)/size
+    # clean_clean = float(clean_clean)/size
 
-    confusionMatrix = [[mal_mal, clean_mal], [mal_clean, clean_clean]]
+    confusionMatrix = [['Actually malicious', mal_mal, clean_mal], ['Actually clean', mal_clean, clean_clean]]
 
-    pprint(confusionMatrix)
-    print "Accuracy: " + str(mal_mal + clean_clean)
-    print "False positives (predicted clean when malicious): " + str(clean_mal)
-    print "False negatives (predicted malicious when clean): " + str(mal_clean)
+    print tabulate(confusionMatrix, headers=['', 'Predicted malicious', 'Predicted clean'])
+    # print "Accuracy: " + str(mal_mal + clean_clean)
+    # print "False positives (predicted clean when malicious): " + str(clean_mal)
+    # print "False negatives (predicted malicious when clean): " + str(mal_clean)
 
 
 def test(size):
