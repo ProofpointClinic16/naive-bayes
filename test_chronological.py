@@ -38,6 +38,11 @@ def classify(filename, size):
     	elif predicted == 'clean' and actual == 'malicious':
     		clean_mal += 1
 
+    prop_caught = float(mal_mal)/float(mal_mal + clean_mal)
+    prop_missed = float(clean_mal)/float(mal_clean + clean_clean)
+
+    ## Stuff to get proportions:
+
     # size = float(size)
 
     # mal_mal = float(mal_mal)/size
@@ -45,12 +50,17 @@ def classify(filename, size):
     # clean_mal = float(clean_mal)/size
     # clean_clean = float(clean_clean)/size
 
-    confusionMatrix = [['Actually malicious', mal_mal, clean_mal], ['Actually clean', mal_clean, clean_clean]]
+    ## Confusion matrix stuff:
 
-    print tabulate(confusionMatrix, headers=['', 'Predicted malicious', 'Predicted clean'])
-    # print "Accuracy: " + str(mal_mal + clean_clean)
-    # print "False positives (predicted clean when malicious): " + str(clean_mal)
-    # print "False negatives (predicted malicious when clean): " + str(mal_clean)
+    # confusionMatrix = [['Actually malicious', mal_mal, clean_mal], ['Actually clean', mal_clean, clean_clean]]
+
+    # print tabulate(confusionMatrix, headers=['', 'Predicted malicious', 'Predicted clean'])
+
+    print "Total: " + str(mal_mal + mal_clean + clean_mal + clean_clean)
+    print "Malware: " + str(mal_mal + clean_mal)
+    print "Clean: " + str(mal_clean + clean_clean)
+    print "Caught: " + str(mal_mal) + " (" + "{:.1%}".format(prop_caught) + ")"
+    print "Missed: " + str(clean_mal) + " (" + "{:.1%}".format(prop_missed) + ")"
 
 
 def test(size):
