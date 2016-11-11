@@ -12,6 +12,11 @@ def parse(filename):
             result = re.search(r"result': u'(.+?)'}", line).group(1)
             url = re.search(r"url': u'(.+?)', ", line).group(1)
 
+            # Our regex is imperfect
+            # Temporary workaround: ignore things that don't parse correctly
+            if result != 'malicious' and result != 'error' and result != 'clean':
+                continue
+
             datum['url'] = url
             datum['result'] = result
 
