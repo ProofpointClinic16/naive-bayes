@@ -1,4 +1,4 @@
-import json
+import re
 
 
 def parse(filename):
@@ -6,18 +6,20 @@ def parse(filename):
 
     with open(filename) as f:
         for line in f:
-            line = line.replace("u'","\"")
-            line = line.replace("u\"", "\"")
-            line = line.replace("':", "\":")
-            line = line.replace("',", "\",")
-            line = line.replace("']", "\"]")
-            line = line.replace("'}", "\"}")
-            line = line.replace(" date", " \"date")
-            line = line.replace("),", ")\",")
-            line = line.replace(")',", ")\",")
-            line = line.replace("None", "\"None\"")
-            line = line.replace("Object", "\"Object")
 
-            data += [json.loads(line)]
+            datum = {}
+
+            result = re.search(r"result': u'(.+?)'}", line).group(1)
+            url = re.search(r"url': u'(.+?)', ", line).group(1)
+
+            # Our regex is imperfect
+            # Temporary workaround: ignore things that don't parse correctly
+            if result != 'malicious' and result != 'error' and result != 'clean':
+                continue
+
+            datum['url'] = url
+            datum['result'] = result
+
+            data += [datum]
 
     return data
