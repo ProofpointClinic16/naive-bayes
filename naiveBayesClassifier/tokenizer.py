@@ -1,3 +1,4 @@
+from nltk import ngrams
 import re
 
 class Tokenizer(object):
@@ -6,6 +7,7 @@ class Tokenizer(object):
         self.signs_to_remove = signs_to_remove
 
     def tokenize(self,text):
+        fourgrams = ngrams(text.split(), 4)
         return text.lower().split('/') + text.lower().split('.')
 
     def remove_stop_words(self,token):
