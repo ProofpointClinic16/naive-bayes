@@ -40,8 +40,9 @@ def classify(filename, size):
 
         classifier = Classifier(trainer.data, tokenizer.Tokenizer(stop_words = [], signs_to_remove = [""]))
 
-    prop_caught = float(mal_mal)/float(mal_mal + clean_mal)
-    prop_missed = float(clean_mal)/float(mal_mal + clean_mal)
+    total = float(mal_mal + mal_clean + clean_mal + clean_clean)
+    prop_caught = float(mal_mal + clean_clean)/total
+    prop_missed = float(clean_mal + mal_clean)/total
 
     ## Stuff to get proportions:
 
@@ -58,11 +59,11 @@ def classify(filename, size):
 
     # print tabulate(confusionMatrix, headers=['', 'Predicted malicious', 'Predicted clean'])
 
-    print "Total: " + str(mal_mal + mal_clean + clean_mal + clean_clean)
+    print "Total: " + str(int(total))
     print "Malware: " + str(mal_mal + clean_mal)
     print "Clean: " + str(mal_clean + clean_clean)
-    print "Caught: " + str(mal_mal) + " (" + "{:.1%}".format(prop_caught) + ")"
-    print "Missed: " + str(clean_mal) + " (" + "{:.1%}".format(prop_missed) + ")"
+    print "Caught: " + str(mal_mal + clean_clean) + " (" + "{:.1%}".format(prop_caught) + ")"
+    print "Missed: " + str(clean_mal + mal_clean) + " (" + "{:.1%}".format(prop_missed) + ")"
 
 
 def test(size):
