@@ -28,14 +28,18 @@ def clean(url):
 
 def predict_url( url):
     prob = 0
+    url = ''.join(sorted(url))
     if len(url) > 4:
         score = 0
-        b = (ord(url[0]) << 16) | (ord(url[1]) << 8) | ord(url[2])
+        #b = (ord(url[0]) << 16) | (ord(url[1]) << 8) | ord(url[2])
+        b = url[0:3]
         for c in url[3:]:
             if c == '/' or c == '.':
                 continue
-            b = ((b << 8) & 0xFFFFFFFF) | ord(c)
-            h = b % P
+            #b = ((b << 8) & 0xFFFFFFFF) | ord(c)
+            b += c
+            #h = b % P
+            h = abs(hash(b)) % P
             if dun[h]:
                 continue
 #            dun[h] = 1
@@ -59,14 +63,18 @@ def predict_url( url):
 
 def train_url( url,is_malware,learn):
     prob = 0
+    url = ''.join(sorted(url))
     if len(url) > 4:
         score = 0
-        b = (ord(url[0]) << 16) | (ord(url[1]) << 8) | ord(url[2])
+        #b = (ord(url[0]) << 16) | (ord(url[1]) << 8) | ord(url[2])
+        b = url[0:3]
         for c in url[3:]:
             if c == '/' or c == '.':
                 continue
-            b = ((b << 8) & 0xFFFFFFFF) | ord(c)
-            h = b % P
+            #b = ((b << 8) & 0xFFFFFFFF) | ord(c)
+            b += c
+            h = abs(hash(b)) % P
+            #h = b % P
             if dun[h]:
                 continue
             dun[h] = 1
@@ -76,13 +84,17 @@ def train_url( url,is_malware,learn):
 
     if len(url) > 4:
         # pass 1
-        b = (ord(url[0]) << 16) | (ord(url[1]) << 8) | ord(url[2])
+        #b = (ord(url[0]) << 16) | (ord(url[1]) << 8) | ord(url[2])
+        b = sorted(url[0:3])
         for c in url[3:]:
             if c == '/' or c == '.':
                 continue
             #    gram=gram[1:]+c
-            b = ((b << 8) & 0xFFFFFFFF) | ord(c)
-            h = b % P
+            #b = ((b << 8) & 0xFFFFFFFF) | ord(c)
+            #h = b % P
+            b += c
+            b = ''.join(sorted(b))
+            h = abs(hash(b)) % P
             if dun[h]:
                 dun[h] = 0
                 if abs(w[h]) < max_weight:
