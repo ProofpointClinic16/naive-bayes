@@ -6,7 +6,9 @@ class Tokenizer(object):
         self.signs_to_remove = signs_to_remove
 
     def tokenize(self,text):
-        return text.lower().split('/') + text.lower().split('.')
+        n = 4
+        grams = [text[i:i+n] for i in xrange(len(text)-n+1)]
+        return text.lower().split('/') + text.lower().split('.') + grams
 
     def remove_stop_words(self,token):
         if token in self.stop_words:

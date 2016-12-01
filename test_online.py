@@ -68,3 +68,7 @@ def classify(filename, size):
 
 def test(size):
     classify('lotsodata.txt', size)
+
+
+def test_all():
+    test(140000)
