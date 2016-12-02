@@ -22,19 +22,22 @@ def classify(filename, size):
 
     classifier = Classifier(trainer.data, tokenizer.Tokenizer(stop_words = [], signs_to_remove = [""]))
 
+    out = open("mislabeled.txt", "w")
+
     for sample in trainingSet[1:]:
 
-    	predicted = classifier.classify(sample['url'])[0][0]
-    	actual = sample['result']
+        predicted = classifier.classify(sample['url'])[0][0]
+        actual = sample['result']
 
-    	if predicted == 'malicious' and actual == 'malicious':
-    		mal_mal += 1
-    	elif predicted == 'malicious' and actual == 'clean':
-    		mal_clean += 1
-    	elif predicted == 'clean' and actual == 'clean':
-    		clean_clean += 1
-    	elif predicted == 'clean' and actual == 'malicious':
-    		clean_mal += 1
+        if predicted == 'malicious' and actual == 'malicious':
+            mal_mal += 1
+        elif predicted == 'malicious' and actual == 'clean':
+            mal_clean += 1
+        elif predicted == 'clean' and actual == 'clean':
+            clean_clean += 1
+        elif predicted == 'clean' and actual == 'malicious':
+            out.write(sample['url'] + '\n')
+            clean_mal += 1
 
         trainer.train(sample['url'], sample['result'])
 
