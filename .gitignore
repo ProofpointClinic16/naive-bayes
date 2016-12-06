@@ -28,7 +28,8 @@ var/
 .idea/
 
 # Data file
-lotsodata.txt
+all_data.txt
+150_samples.txt
 
 # Output file
 mislabeled.txt
