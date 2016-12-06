@@ -8,7 +8,7 @@ from sklearn.metrics import confusion_matrix, f1_score, accuracy_score
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 
-def test(filename="lotsodata.txt", size=140000):
+def test(filename="all_data.txt", size=140000):
     # trainingSet has the form: list of dictionaries
     # Each dictionary is a sample
     # with keys URL and result

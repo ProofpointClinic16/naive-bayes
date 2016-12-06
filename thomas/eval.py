@@ -41,4 +41,4 @@ print("False Positive: {0} ({1}% of all clean samples)".format(false_positive, 1
 print("False Negative: {0} ({1}% of all malicious samples)".format(false_negative, 100 * false_negative/malware_count))
 print("True Positive: {0} ({1}% of all malicious samples)".format(true_positive, 100 * true_positive/malware_count))
 print("True Negative: {0} ({1}% of all clean samples)".format(true_negative, 100 * true_negative / clean_count))
-print("Sanbox submission: {0} ({1}% malicious)".format(sandbox_count,100*true_positive/sandbox_count))
+print("Sandbox submission: {0} ({1}% malicious)".format(sandbox_count,100*true_positive/sandbox_count))

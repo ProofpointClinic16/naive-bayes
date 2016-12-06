@@ -27,10 +27,10 @@ def classify(filename, size, url, result):
 
 
 def test(size, url, result):
-    classify('lotsodata.txt', size, url, result)
+    classify('all_data.txt', size, url, result)
 
 
 def test_lots(size, urls, results):
 
     for i in xrange(len(urls)):
-        classify('lotsodata.txt', size, urls[i], results[i])
+        classify('all_data.txt', size, urls[i], results[i])

@@ -70,7 +70,7 @@ def classify(filename, size):
 
 
 def test(size):
-    classify('lotsodata.txt', size)
+    classify('all_data.txt', size)
 
 
 def test_all():
