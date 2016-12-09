@@ -46,6 +46,7 @@ def classify(filename, size):
     total = float(mal_mal + mal_clean + clean_mal + clean_clean)
     prop_caught = float(mal_mal + clean_clean)/total
     prop_missed = float(clean_mal + mal_clean)/total
+    false_positive = float(clean_mal)/float(mal_mal + clean_mal)
 
     ## Stuff to get proportions:
 
@@ -65,8 +66,9 @@ def classify(filename, size):
     print "Total: " + str(int(total))
     print "Malware: " + str(mal_mal + clean_mal)
     print "Clean: " + str(mal_clean + clean_clean)
-    print "Caught: " + str(mal_mal + clean_clean) + " (" + "{:.1%}".format(prop_caught) + ")"
-    print "Missed: " + str(clean_mal + mal_clean) + " (" + "{:.1%}".format(prop_missed) + ")"
+    print "Caught: " + str(mal_mal + clean_clean) + " (" + "{:.1%}".format(prop_caught) + " of all samples)"
+    print "Missed: " + str(clean_mal + mal_clean) + " (" + "{:.1%}".format(prop_missed) + " of all samples)"
+    print "Malicious missed: " + str(clean_mal) + " (" + "{:.1%}".format(false_positive) + " of all malicious samples)"
 
 
 def test(size):
