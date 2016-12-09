@@ -2,7 +2,7 @@ import make_training_set
 import numpy
 from pprint import pprint
 from pandas import DataFrame
-from sklearn.cross_validation import KFold
+from sklearn.model_selection import KFold
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import confusion_matrix, f1_score, accuracy_score
 from sklearn.naive_bayes import MultinomialNB
@@ -36,12 +36,12 @@ def test(filename="all_data.txt", size=1000):
 
     # res = pipeline.predict(examples)
 
-    k_fold = KFold(n=len(data_frame), n_folds=6)
+    k_fold = KFold(n_splits=6)
     scores = []
     accuracies = []
     confusion = numpy.array([[0, 0], [0, 0]])
 
-    for train_indices, test_indices in k_fold:
+    for train_indices, test_indices in k_fold.split(data_frame):
         train_text = data_frame.iloc[train_indices]["url"].values
         train_y = data_frame.iloc[train_indices]["result"].values
 
