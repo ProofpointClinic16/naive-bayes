@@ -8,7 +8,7 @@ from sklearn.metrics import confusion_matrix, f1_score, accuracy_score
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 
-def test(filename="all_data.txt", size=140000):
+def test(filename="all_data.txt", size=1000):
     # trainingSet has the form: list of dictionaries
     # Each dictionary is a sample
     # with keys URL and result
@@ -69,9 +69,14 @@ def test(filename="all_data.txt", size=140000):
     mal_mal = confusion[1][1]
     prop_caught = float(mal_mal + clean_clean)/total
     prop_missed = float(clean_mal + mal_clean)/total
+    false_positive = float(clean_mal)/float(clean_mal + mal_mal)
 
     print "Total: " + str(int(total))
     print "Malware: " + str(mal_mal + clean_mal)
     print "Clean: " + str(mal_clean + clean_clean)
-    print "Caught: " + str(mal_mal + clean_clean) + " (" + "{:.1%}".format(prop_caught) + ")"
-    print "Missed: " + str(clean_mal + mal_clean) + " (" + "{:.1%}".format(prop_missed) + ")"
+    print "Caught: " + str(mal_mal + clean_clean) + " (" + "{:.1%}".format(prop_caught) + " of all samples)"
+    print "Missed: " + str(clean_mal + mal_clean) + " (" + "{:.1%}".format(prop_missed) + " of all samples)"
+    print "Malicious missed: " + str(clean_mal) + " (" + "{:.1%}".format(false_positive) + " of all malicious samples)"
+
+def test_all():
+    test(size=140000)
