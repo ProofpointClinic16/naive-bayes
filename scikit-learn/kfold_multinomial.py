@@ -3,7 +3,7 @@ import numpy
 from pprint import pprint
 from pandas import DataFrame
 from sklearn.model_selection import KFold
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.metrics import confusion_matrix, f1_score, accuracy_score
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
