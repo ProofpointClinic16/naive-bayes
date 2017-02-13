@@ -1,4 +1,4 @@
-import make_training_set
+import make_training_set_ip
 import numpy
 from pprint import pprint
 from pandas import DataFrame
@@ -8,44 +8,27 @@ from sklearn.metrics import confusion_matrix, f1_score, accuracy_score
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 
-def test(filename="all_data.txt", size=1000):
+def test(filename="all_data.txt", size=10000):
     # trainingSet has the form: list of dictionaries
     # Each dictionary is a sample
     # with keys URL and result
-    trainingSet = make_training_set.create_set(filename, size)
+    trainingSet = make_training_set_ip.create_set(filename, size)
 
     data_frame = DataFrame(trainingSet)
 
-    # count_vectorizer = CountVectorizer(analyzer="char")
-    # counts = count_vectorizer.fit_transform(data_frame["url"].values)
-
-    # classifier = MultinomialNB()
-    # targets = data_frame["result"].values
-    # classifier.fit(counts, targets)
-
-    # examples = ["http://796481.finewatch2016.ru"]
-
-    # example_counts = count_vectorizer.transform(examples)
-    # predictions = classifier.predict(example_counts)
-    # print predictions
-
     pipeline = Pipeline([('vectorizer',  CountVectorizer(analyzer="word", ngram_range = (2,4))),
-                         ('classifier',  MultinomialNB()) ])
+                         ('classifier',  MultinomialNB())])
 
-    # pipeline.fit(data_frame["url"].values, data_frame["result"].values)
-
-    # res = pipeline.predict(examples)
-
-    k_fold = KFold(n_splits=2)
+    k_fold = KFold(n_splits=5)
     scores = []
     accuracies = []
     confusion = numpy.array([[0, 0], [0, 0]])
 
     for train_indices, test_indices in k_fold.split(data_frame):
-        train_text = data_frame.iloc[train_indices]["url"].values
+        train_text = data_frame.iloc[train_indices]["ip"].values
         train_y = data_frame.iloc[train_indices]["result"].values
 
-        test_text = data_frame.iloc[test_indices]["url"].values
+        test_text = data_frame.iloc[test_indices]["ip"].values
         test_y = data_frame.iloc[test_indices]["result"].values
 
         pipeline.fit(train_text, train_y)
