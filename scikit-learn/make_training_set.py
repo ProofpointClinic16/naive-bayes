@@ -1,8 +1,7 @@
 import re
-from pprint import pprint
 
 # Size is the total number of samples in one data set
-def create_set(filename, size=10):
+def create_set(filename, size=10, type="url"):
 
     training = []
 
@@ -14,9 +13,12 @@ def create_set(filename, size=10):
             datum = {}
 
             result = re.search(r"result': u'(.+?)'}", line).group(1)
-            url = re.search(r"url': u'(.+?)', ", line).group(1)
 
-            datum['url'] = url
+            sample = re.search(r"url': u'(.+?)', ", line).group(1)
+            if type == "ip":
+                sample = re.search(r"ip': u'(.+?)', ", line).group(1)
+
+            datum[type] = sample
             datum['result'] = result
 
             if result != 'malicious' and result != 'clean':
@@ -28,8 +30,5 @@ def create_set(filename, size=10):
 
             if training_left == 0:
                 break
-
-    # pprint(training)
-    # pprint(testing)
 
     return training
