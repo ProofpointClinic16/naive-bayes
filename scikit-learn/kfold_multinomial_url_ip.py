@@ -1,8 +1,10 @@
 import kfold_multinomial
-import kfold_mulitnomial_ip
-
+import kfold_multinomial_ip
 import numpy
-from sklearn.metrics import confusion_matrix, f1_score, accuracy_score
+from pprint import pprint
+from pandas import DataFrame
+from sklearn.model_selection import KFold
+from sklearn import metrics
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 
@@ -10,66 +12,30 @@ def test(filename="all_data.txt", size=10000):
     # trainingSet has the form: list of dictionaries
     # Each dictionary is a sample
     # with keys URL and result
-    ipTrainingSet = make_training_set_ip.create_set(filename, size)
 
-    data_frame = DataFrame(trainingSet)
+    url_probs, url_res = kfold_multinomial.test_all()
+    ip_probs, ip_res = kfold_multinomial_ip.test_all()
 
-    pipeline = Pipeline([('vectorizer',  CountVectorizer(analyzer="word", ngram_range = (2,4))),
-                         ('classifier',  MultinomialNB())])
+    probs = []
 
-    k_fold = KFold(n_splits=5)
-    scores = []
-    accuracies = []
-    confusion = numpy.array([[0, 0], [0, 0]])
+    for i in range(len(url_probs)):
+        probs.append([url_probs[i][0], ip_probs[i][0]])
 
-    for train_indices, test_indices in k_fold.split(data_frame):
-        train_text = data_frame.iloc[train_indices]["ip"].values
-        train_y = data_frame.iloc[train_indices]["result"].values
+    pipeline = Pipeline([('classifier',  MultinomialNB())])
 
-        test_text = data_frame.iloc[test_indices]["ip"].values
-        test_y = data_frame.iloc[test_indices]["result"].values
+    model = pipeline.fit(probs[2 * (len(probs) / 3):], url_res[2 * (len(url_res) / 3):])
 
-        pipeline.fit(train_text, train_y)
-        predictions = pipeline.predict(test_text)
+    res = model.predict(probs[:2 * (len(probs) / 3)])
 
-        confusion += confusion_matrix(test_y, predictions)
-        accuracy = accuracy_score(test_y, predictions)
-        accuracies.append(accuracy)
-        score = f1_score(test_y, predictions, pos_label="malicious")
-        scores.append(score)
+    err = 0
+    mal = 0
+    for i, prediction in enumerate(res):
+        if ip_res[i] == 'malicious':
+            mal += 1
+            if prediction == 'clean':
+                err += 1
 
-    # print 'Total URLs classified: ' + str(len(data_frame))
-    # print 'Score: ' + str(sum(scores)/len(scores))
-    # print 'Confusion matrix:'
-    # print confusion
-
-    # Variables are in predicted_actual order
-    total = float(len(data_frame))
-    clean_clean = confusion[0][0]
-    mal_clean = confusion[0][1]
-    clean_mal = confusion[1][0]
-    mal_mal = confusion[1][1]
-    # prop_caught = float(mal_mal + clean_clean)/total
-    mal = mal_mal + clean_mal
-    clean = clean_clean + mal_clean
-    true_positive = float(mal_mal)
-    false_positive = float(mal_clean)
-    true_negative = float(clean_clean)
-    false_negative = float(clean_mal)
-    # prop_missed = float(clean_mal + mal_clean)/total
-    # false_positive = float(clean_mal)/float(clean_mal + mal_mal)
-
-    print "Total: " + str(int(total))
-    print "Malware: " + str(mal)
-    print "Clean: " + str(clean)
-    print "True Positive " + str(mal_mal) + " (" + "{:.1%}".format(true_positive/mal) + " of all malicious samples)"
-    print "False Negative " + str(clean_mal) + " (" + "{:.1%}".format(false_negative/mal) + " of all malicious samples)"
-    print "True Negative " + str(clean_clean) + " (" + "{:.1%}".format(true_negative/clean) + " of all clean samples)"
-    print "False Positive " + str(mal_clean) + " (" + "{:.1%}".format(false_positive/clean) + " of all cleansamples)"
-
-    # print "Caught: " + str(mal_mal + clean_clean) + " (" + "{:.1%}".format(prop_caught) + " of all samples)"
-    # print "Missed: " + str(clean_mal + mal_clean) + " (" + "{:.1%}".format(prop_missed) + " of all samples)"
-    # print "Malicious missed: " + str(clean_mal) + " (" + "{:.1%}".format(false_positive) + " of all malicious samples)"
+    print metrics.classification_report(url_res[:2 * (len(probs) / 3)], res)
 
 def test_all():
     test(size=140000)
