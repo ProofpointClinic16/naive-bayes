@@ -13,6 +13,9 @@ def test_fixed(filename="all_data.txt", size=137000):
 
     # Size is fixed to 140k -- using all samples!
 
+    # How many malicious values we want to keep around
+    mal_num = 1500
+
     # Iteration size can be chosen, usually 1000
     iteration = 1000
     trainingSet = make_training_set.create_set(filename, size)
@@ -71,9 +74,9 @@ def test_fixed(filename="all_data.txt", size=137000):
         train_malicious = np.append(train_malicious, np.take(train_text, malicious_indices))
         train_malicious_y = np.append(train_malicious_y, np.take(train_y, malicious_indices))
 
-        if train_malicious.size > 500:
-            train_malicious = train_malicious[-500:]
-            train_malicious_y = train_malicious_y[-500:]
+        if train_malicious.size > mal_num:
+            train_malicious = train_malicious[-mal_num:]
+            train_malicious_y = train_malicious_y[-mal_num:]
 
         # Having tested on 1000 samples, now train on them
         new_train = data_frame.iloc[xrange(current_index, current_index+iteration)]["url"].values
