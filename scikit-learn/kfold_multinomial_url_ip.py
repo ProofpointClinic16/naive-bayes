@@ -23,9 +23,9 @@ def test(filename="all_data.txt", size=10000):
 
     pipeline = Pipeline([('classifier',  MultinomialNB())])
 
-    model = pipeline.fit(probs[2 * (len(probs) / 3):], url_res[2 * (len(url_res) / 3):])
+    model = pipeline.fit(probs[(len(probs) / 2):], url_res[(len(url_res) / 2):])
 
-    res = model.predict(probs[:2 * (len(probs) / 3)])
+    res = model.predict(probs[:(len(probs) / 2)])
 
     err = 0
     mal = 0

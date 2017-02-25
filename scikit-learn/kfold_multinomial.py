@@ -36,7 +36,7 @@ def test(filename="all_data.txt", size=1000):
 
     # res = pipeline.predict(examples)
 
-    k_fold = KFold(n_splits=5)
+    k_fold = KFold(n_splits=2)
     scores = []
     accuracies = []
     confusion = numpy.array([[0, 0], [0, 0]])
@@ -55,7 +55,6 @@ def test(filename="all_data.txt", size=1000):
         predictions = pipeline.predict(test_text)
 
         probs = pipeline.predict_proba(test_text)
-
 
         confusion += confusion_matrix(test_y, predictions)
         accuracy = accuracy_score(test_y, predictions)
@@ -91,6 +90,8 @@ def test(filename="all_data.txt", size=1000):
     print "Malicious Missed: " + str(clean_mal) + " (" + "{:.1%}".format(false_negative/mal) + " of all malicious samples)"
     print "Clean Caught: " + str(clean_clean) + " (" + "{:.1%}".format(true_negative/clean) + " of all clean samples)"
     print "Clean Missed: " + str(mal_clean) + " (" + "{:.1%}".format(false_positive/clean) + " of all cleansamples)"
+
+    print probs
 
     return probs, test_y
 

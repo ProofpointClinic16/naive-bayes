@@ -19,7 +19,7 @@ def test(filename="all_data.txt", size=10000):
     pipeline = Pipeline([('vectorizer',  CountVectorizer(analyzer="word", ngram_range = (2,4))),
                          ('classifier',  MultinomialNB())])
 
-    k_fold = KFold(n_splits=5)
+    k_fold = KFold(n_splits=2)
     scores = []
     accuracies = []
     confusion = numpy.array([[0, 0], [0, 0]])
