@@ -7,7 +7,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 
 
-def test_fixed(filename="all_data.txt", size=137000, type="url", mal_num=500, iteration=1000):
+def test_fixed(filename="all_data.txt", size=137000, type="ip", mal_num=500, iteration=1000):
     # trainingSet has the form: list of dictionaries
     # Each dictionary is a sample
     # with keys URL and result
