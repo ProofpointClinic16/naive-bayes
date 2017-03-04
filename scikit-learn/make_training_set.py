@@ -17,6 +17,9 @@ def create_set(filename, size=10, type="url"):
             sample = re.search(r"url': u'(.+?)', ", line).group(1)
             if type == "ip":
                 sample = re.search(r"ip': u'(.+?)', ", line).group(1)
+                # Up until index -1 to drop final octet from IP
+                # new = '.'.join( sample.split('.')[:-1] )
+                # sample = new
 
             datum[type] = sample
             datum['result'] = result
