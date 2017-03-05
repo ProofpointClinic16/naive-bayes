@@ -16,12 +16,11 @@ def create_set(filename, size=10, type="url"):
 
             sample = re.search(r"url': u'(.+?)', ", line).group(1)
             if type == "ip":
-                original = re.search(r"ip': u'(.+?)', ", line).group(1)
-                new = '.'.join( original.split('.')[:-1] )
-                if new == '':
-                    sample = original
-                else:
-                    sample = new
+                sample = re.search(r"ip': u'(.+?)', ", line).group(1)
+                if sample == 'N/A':
+                    continue
+                # This line is to remove the final, least significant octet
+                sample = '.'.join( sample.split('.')[:-1] )
 
             datum[type] = sample
             datum['result'] = result

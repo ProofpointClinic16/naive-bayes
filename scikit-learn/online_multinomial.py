@@ -22,7 +22,7 @@ def test_fixed(filename="all_data.txt", size=137000, type="ip", mal_num=500, ite
     if type == "ip":
         analyze = "word"
 
-    pipeline = Pipeline([('vectorizer',  CountVectorizer(analyzer=analyze, ngram_range = (4,4))),
+    pipeline = Pipeline([('vectorizer',  CountVectorizer(analyzer=analyze, ngram_range = (1,3))),
                          ('classifier',  MultinomialNB()) ])
 
     clean_clean = 0
