@@ -24,6 +24,7 @@ def test(filename="all_data.txt", size=10000):
     accuracies = []
     confusion = numpy.array([[0, 0], [0, 0]])
     probs = []
+    res = []
 
     for train_indices, test_indices in k_fold.split(data_frame):
         train_text = data_frame.iloc[train_indices]["ip"].values
@@ -34,7 +35,10 @@ def test(filename="all_data.txt", size=10000):
 
         pipeline.fit(train_text, train_y)
         predictions = pipeline.predict(test_text)
-        probs = pipeline.predict_proba(test_text)
+
+        probs += (pipeline.predict_log_proba(test_text)).tolist()
+        res += test_y.tolist()
+
         confusion += confusion_matrix(test_y, predictions)
         accuracy = accuracy_score(test_y, predictions)
         accuracies.append(accuracy)
@@ -70,11 +74,11 @@ def test(filename="all_data.txt", size=10000):
     print "Clean Caught: " + str(clean_clean) + " (" + "{:.1%}".format(true_negative/clean) + " of all clean samples)"
     print "Clean Missed: " + str(mal_clean) + " (" + "{:.1%}".format(false_positive/clean) + " of all cleansamples)"
 
-    return probs, test_y
+    return probs, res
 
     # print "Caught: " + str(mal_mal + clean_clean) + " (" + "{:.1%}".format(prop_caught) + " of all samples)"
     # print "Missed: " + str(clean_mal + mal_clean) + " (" + "{:.1%}".format(prop_missed) + " of all samples)"
     # print "Malicious missed: " + str(clean_mal) + " (" + "{:.1%}".format(false_positive) + " of all malicious samples)"
 
 def test_all():
-    return test(size=140000)
+    return test(size=137000)

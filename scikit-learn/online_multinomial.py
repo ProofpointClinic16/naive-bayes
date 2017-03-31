@@ -38,6 +38,8 @@ def test_fixed(filename="all_data.txt", size=137000, type="url", mal_num=500, it
 
     malicious_indices = []
 
+    probs = []
+
     # Need to know how far along data set we are
     current_index = iteration
 
@@ -54,6 +56,8 @@ def test_fixed(filename="all_data.txt", size=137000, type="url", mal_num=500, it
             test_y = [data_frame.iloc[current_index+j]["result"]]
 
             prediction = pipeline.predict(test_text)
+
+            probs += pipeline.predict_log_proba(test_text).tolist()
 
             # Keep track of how good it was
             if prediction[0] == 'clean' and test_y[0] == 'clean':
@@ -103,3 +107,5 @@ def test_fixed(filename="all_data.txt", size=137000, type="url", mal_num=500, it
     print "True negatives: " + str(clean_clean) + " (" + "{:.1%}".format(true_negative/clean) + " of all clean samples)"
     print "False positives: " + str(mal_clean) + " (" + "{:.1%}".format(false_positive/clean) + " of all clean samples)"
 
+
+    return probs, data_frame.iloc[:]["result"].values

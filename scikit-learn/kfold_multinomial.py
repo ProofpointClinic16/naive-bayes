@@ -28,6 +28,8 @@ def test(filename="all_data.txt", size=1000, type="url"):
     confusion = numpy.array([[0, 0], [0, 0]])
 
     probs = []
+    test_y = []
+    res = []
 
 
     for train_indices, test_indices in k_fold.split(data_frame):
@@ -40,7 +42,8 @@ def test(filename="all_data.txt", size=1000, type="url"):
         pipeline.fit(train_text, train_y)
         predictions = pipeline.predict(test_text)
 
-        probs = pipeline.predict_proba(test_text)
+        probs += (pipeline.predict_log_proba(test_text)).tolist()
+        res += test_y.tolist()
 
         confusion += confusion_matrix(test_y, predictions)
         accuracy = accuracy_score(test_y, predictions)
@@ -72,13 +75,11 @@ def test(filename="all_data.txt", size=1000, type="url"):
     print "True negatives: " + str(clean_clean) + " (" + "{:.1%}".format(true_negative/clean) + " of all clean samples)"
     print "False positives: " + str(mal_clean) + " (" + "{:.1%}".format(false_positive/clean) + " of all cleansamples)"
 
-    print probs
-
-    return probs, test_y
+    return probs, res
 
     # print "Caught: " + str(mal_mal + clean_clean) + " (" + "{:.1%}".format(prop_caught) + " of all samples)"
     # print "Missed: " + str(clean_mal + mal_clean) + " (" + "{:.1%}".format(prop_missed) + " of all samples)"
     # print "Malicious missed: " + str(clean_mal) + " (" + "{:.1%}".format(false_positive) + " of all malicious samples)"
 
 def test_all(type="url"):
-    test(size=140000, type=type)
+    return test(size=137000, type=type)
