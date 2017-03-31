@@ -31,7 +31,6 @@ def test(filename="all_data.txt", size=1000, type="url"):
     test_y = []
     res = []
 
-
     for train_indices, test_indices in k_fold.split(data_frame):
         train_text = data_frame.iloc[train_indices][type].values
         train_y = data_frame.iloc[train_indices]["result"].values
@@ -50,8 +49,6 @@ def test(filename="all_data.txt", size=1000, type="url"):
         accuracies.append(accuracy)
         score = f1_score(test_y, predictions, pos_label="malicious")
         scores.append(score)
-
-
 
     # Variables are in predicted_actual order
     total = float(len(data_frame))

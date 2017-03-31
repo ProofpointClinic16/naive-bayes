@@ -2,6 +2,7 @@ import kfold_multinomial
 import online_multinomial
 import kfold_multinomial_ip
 import numpy
+import json
 from pprint import pprint
 from pandas import DataFrame
 from sklearn.model_selection import KFold
@@ -16,7 +17,9 @@ def test(filename="all_data.txt", size=10000):
 
     # url_probs = online_multinomial.test_fixed()
     url_probs, url_res = online_multinomial.test_fixed()
-    ip_probs, ip_res = kfold_multinomial_ip.test_all()
+    ip_probs, ip_res = kfold_multinomial.test_all(type="ip")
+
+    ip_res = ip_res[1000:]
 
     probs = []
 
@@ -29,13 +32,23 @@ def test(filename="all_data.txt", size=10000):
         # so offset accordingly if you decide to change the initial number of samples to train on in the online
         # classifier
 
+    data_frame = DataFrame(probs)
+
     pipeline = Pipeline([('classifier',  MultinomialNB())])
 
-    model = pipeline.fit(probs[:len(probs) / 2], ip_res[1000:1000 + (len(probs) / 2)])
+    model1 = pipeline.fit(probs[:len(probs) / 2], ip_res[:(len(probs) / 2)])
 
-    res = model.predict(probs[len(probs) / 2:])
+    res = (model1.predict_log_proba(probs[len(probs) / 2:])).tolist()
 
-    confusion = metrics.confusion_matrix(ip_res[1000 + (len(probs) / 2):], res)
+    model2 = pipeline.fit(probs[len(probs) / 2:], ip_res[(len(probs) / 2):])
+
+    res += (model2.predict(probs[:len(probs) / 2])).tolist()
+
+    f = open('nb_probs.txt', 'w')
+    json.dump(res, f)
+    f.close()
+
+    confusion = metrics.confusion_matrix(ip_res[(len(probs) / 2):], res[(len(res) / 2)])
 
     clean_clean = confusion[0][0]
     mal_clean = confusion[0][1]
