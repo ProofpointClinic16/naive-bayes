@@ -40,7 +40,9 @@ def test_fixed(filename="all_data.txt", size=137000, mal_num=500, iteration=1000
     train_y = data_frame_ip.iloc[xrange(iteration)]["result"].values
 
     # Initialize empty data sets to keep around the extra malicious samples
-    train_malicious = np.array([], dtype=object)
+    train_malicious_ip = np.array([], dtype=object)
+    train_malicious_url = np.array([], dtype=object)
+
     train_malicious_y = np.array([], dtype=object)
 
     malicious_indices = []
@@ -68,28 +70,33 @@ def test_fixed(filename="all_data.txt", size=137000, mal_num=500, iteration=1000
         for j in xrange(iteration):
             test_text_ip = [data_frame_ip.iloc[current_index+j]["ip"]]
             test_text_url = [data_frame_url.iloc[current_index+j]["url"]]
-            test_y = [data_frame.iloc[current_index+j]["result"]]
 
-    ##############################################################################################################
-    ##############################################################################################################
-    ##############################################################################################################
+            test_y = [data_frame_ip.iloc[current_index+j]["result"]]
 
-            prediction = pipeline.predict(test_text)
+            prediction_ip_clean = pipeline_ip.predict_proba(test_text_ip)[0][0]
+            prediction_url_clean = pipeline_url.predict_proba(test_text_url)[0][0]
+
+            if prediction_ip_clean + prediction_url_clean < 1.0:
+                prediction = 'clean'
+            else:
+                prediction = 'malicious'
+
+            # print (prediction_ip_clean + prediction_url_clean)
 
             # Keep track of how good it was overall as well as this iteration
-            if prediction[0] == 'clean' and test_y[0] == 'clean':
+            if prediction == 'clean' and test_y[0] == 'clean':
                 clean_clean += 1
                 current_tn += 1
                 current_clean += 1
-            elif prediction[0] == 'clean' and test_y[0] == 'malicious':
+            elif prediction == 'clean' and test_y[0] == 'malicious':
                 clean_mal += 1
                 current_fn += 1
                 current_mal += 1
-            elif prediction[0] == 'malicious' and test_y[0] == 'clean':
+            elif prediction == 'malicious' and test_y[0] == 'clean':
                 mal_clean += 1
                 current_fp += 1
                 current_clean += 1
-            elif prediction[0] == 'malicious' and test_y[0] == 'malicious':
+            elif prediction == 'malicious' and test_y[0] == 'malicious':
                 mal_mal += 1
                 current_tp += 1
                 current_mal += 1
@@ -99,16 +106,22 @@ def test_fixed(filename="all_data.txt", size=137000, mal_num=500, iteration=1000
             if train_y[k] == 'malicious':
                 malicious_indices += [k]
 
-        train_malicious = np.append(train_malicious, np.take(train_text, malicious_indices))
+        train_malicious_ip = np.append(train_malicious_ip, np.take(train_text_ip, malicious_indices))
+        train_malicious_url = np.append(train_malicious_url, np.take(train_text_url, malicious_indices))
+
         train_malicious_y = np.append(train_malicious_y, np.take(train_y, malicious_indices))
 
-        if train_malicious.size > mal_num:
-            train_malicious = train_malicious[-mal_num:]
+        if train_malicious_ip.size > mal_num:
+            train_malicious_ip = train_malicious_ip[-mal_num:]
+            train_malicious_url = train_malicious_url[-mal_num:]
+
             train_malicious_y = train_malicious_y[-mal_num:]
 
         # Having tested on 1000 samples, now train on them
-        new_train = data_frame.iloc[xrange(current_index, current_index+iteration)]["sample"].values
-        new_y = data_frame.iloc[xrange(current_index, current_index+iteration)]["result"].values
+        new_train_ip = data_frame_ip.iloc[xrange(current_index, current_index+iteration)]["ip"].values
+        new_train_url = data_frame_url.iloc[xrange(current_index, current_index+iteration)]["url"].values
+
+        new_y = data_frame_ip.iloc[xrange(current_index, current_index+iteration)]["result"].values
 
         # Finally, for visualization purposes, keep track of how we did in this iteration
         tps += [float(current_tp)/current_mal]
@@ -121,7 +134,8 @@ def test_fixed(filename="all_data.txt", size=137000, mal_num=500, iteration=1000
         print "End of", current_index
         print "Got tp rate", float(current_tp)/current_mal
 
-        pipeline.fit(np.append(new_train, train_malicious), np.append(new_y, train_malicious_y))
+        pipeline_ip.fit(np.append(new_train_ip, train_malicious_ip), np.append(new_y, train_malicious_y))
+        pipeline_url.fit(np.append(new_train_url, train_malicious_url), np.append(new_y, train_malicious_y))
 
     # Variables are in predicted_actual order
     mal = mal_mal + clean_mal
@@ -140,28 +154,28 @@ def test_fixed(filename="all_data.txt", size=137000, mal_num=500, iteration=1000
     print "False positives: " + str(mal_clean) + " (" + "{:.1%}".format(false_positive/clean) + " of all clean samples)"
 
     # Visualize the rates over time
-    plt.figure(1)
-    plt.plot(howmany, tps, 'ro')
-    plt.ylabel('True positive rate')
-    plt.xlabel('Iteration')
-    plt.title('True positive rates against iteration')
+    # plt.figure(1)
+    # plt.plot(howmany, tps, 'ro')
+    # plt.ylabel('True positive rate')
+    # plt.xlabel('Iteration')
+    # plt.title('True positive rates against iteration')
 
-    plt.figure(2)
-    plt.plot(howmany, fns, 'bo')
-    plt.ylabel('False negative rate')
-    plt.xlabel('Iteration')
-    plt.title('False negative rates against iteration')
+    # plt.figure(2)
+    # plt.plot(howmany, fns, 'bo')
+    # plt.ylabel('False negative rate')
+    # plt.xlabel('Iteration')
+    # plt.title('False negative rates against iteration')
 
-    plt.figure(3)
-    plt.plot(howmany, tns, 'go')
-    plt.ylabel('True negative rate')
-    plt.xlabel('Iteration')
-    plt.title('True negative rates against iteration')
+    # plt.figure(3)
+    # plt.plot(howmany, tns, 'go')
+    # plt.ylabel('True negative rate')
+    # plt.xlabel('Iteration')
+    # plt.title('True negative rates against iteration')
 
-    plt.figure(4)
-    plt.plot(howmany, fps, 'mo')
-    plt.ylabel('False positive rate')
-    plt.xlabel('Iteration')
-    plt.title('False positive rates against iteration')
+    # plt.figure(4)
+    # plt.plot(howmany, fps, 'mo')
+    # plt.ylabel('False positive rate')
+    # plt.xlabel('Iteration')
+    # plt.title('False positive rates against iteration')
 
-    plt.show()
+    # plt.show()
