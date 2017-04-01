@@ -1,4 +1,4 @@
-import make_training_set_both
+import make_training_set
 import matplotlib.pyplot as plt
 import numpy as np
 from pandas import DataFrame
@@ -10,18 +10,22 @@ from sklearn.pipeline import Pipeline
 def test_fixed(filename="all_data.txt", size=137000, mal_num=500, iteration=1000):
     # trainingSet has the form: list of dictionaries
     # Each dictionary is a sample
-    # with keys URL and result
+    # with keys URL and result, or IP and result
 
     # Size is fixed to 137k -- using all samples!
 
-    trainingSet = make_training_set_both.create_set(filename, size)
+    trainingSet_ip = make_training_set.create_set(filename, size, "ip")
+    trainingSet_url = make_training_set.create_set(filename, size, "url")
 
-    data_frame = DataFrame(trainingSet)
+    data_frame_ip = DataFrame(trainingSet_ip)
+    data_frame_url = DataFrame(trainingSet_url)
 
-    # Default tokenization on 'word' analyzer:
-    # 2+ alphanumeric characters, punctuation ignored, always treated as separators
-    pipeline = Pipeline([('vectorizer',  CountVectorizer(analyzer="word", ngram_range = (4,4))),
-                         ('classifier',  MultinomialNB()) ])
+
+    pipeline_url = Pipeline([('vectorizer',  CountVectorizer(analyzer="char", ngram_range = (4,4))),
+                             ('classifier',  MultinomialNB()) ])
+
+    pipeline_ip = Pipeline([('vectorizer',  CountVectorizer(analyzer="word", ngram_range = (2,2))),
+                            ('classifier',  MultinomialNB()) ])
 
     clean_clean = 0
     clean_mal = 0
@@ -29,9 +33,13 @@ def test_fixed(filename="all_data.txt", size=137000, mal_num=500, iteration=1000
     mal_mal = 0
 
     # Start by getting first however many samples (given by iteration)
-    train_text = data_frame.iloc[xrange(iteration)]["sample"].values
-    train_y = data_frame.iloc[xrange(iteration)]["result"].values
+    train_text_ip = data_frame_ip.iloc[xrange(iteration)]["ip"].values
+    train_text_url = data_frame_url.iloc[xrange(iteration)]["url"].values
 
+    # This should be the same for IP and URL data sets
+    train_y = data_frame_ip.iloc[xrange(iteration)]["result"].values
+
+    # Initialize empty data sets to keep around the extra malicious samples
     train_malicious = np.array([], dtype=object)
     train_malicious_y = np.array([], dtype=object)
 
@@ -44,7 +52,8 @@ def test_fixed(filename="all_data.txt", size=137000, mal_num=500, iteration=1000
     current_index = iteration
 
     # Train on first however many samples
-    pipeline.fit(train_text, train_y)
+    pipeline_ip.fit(train_text_ip, train_y)
+    pipeline_url.fit(train_text_url, train_y)
 
     # To get entire data set, will need to do this size/iteration times
     # E.g. 140000/1000 = 140 times
@@ -57,8 +66,13 @@ def test_fixed(filename="all_data.txt", size=137000, mal_num=500, iteration=1000
 
         # Each iteration, test on the next however many samples
         for j in xrange(iteration):
-            test_text = [data_frame.iloc[current_index+j]["sample"]]
+            test_text_ip = [data_frame_ip.iloc[current_index+j]["ip"]]
+            test_text_url = [data_frame_url.iloc[current_index+j]["url"]]
             test_y = [data_frame.iloc[current_index+j]["result"]]
+
+    ##############################################################################################################
+    ##############################################################################################################
+    ##############################################################################################################
 
             prediction = pipeline.predict(test_text)
 
