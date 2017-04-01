@@ -19,10 +19,12 @@ def test_fixed(filename="all_data.txt", size=137000, type="url", mal_num=500, it
     data_frame = DataFrame(trainingSet)
 
     analyze = "char"
+    n_range = (4, 4)
     if type == "ip":
         analyze = "word"
+        n_range = (2, 2)
 
-    pipeline = Pipeline([('vectorizer',  CountVectorizer(analyzer=analyze, ngram_range = (2,2))),
+    pipeline = Pipeline([('vectorizer',  CountVectorizer(analyzer=analyze, ngram_range=n_range)),
                          ('classifier',  MultinomialNB()) ])
 
     clean_clean = 0
@@ -64,7 +66,7 @@ def test_fixed(filename="all_data.txt", size=137000, type="url", mal_num=500, it
 
             prediction = pipeline.predict(test_text)
 
-            prob = pipeline.predict_proba(test_text)
+            # print pipeline.predict_proba(test_text)
 
             # Keep track of how good it was overall as well as this iteration
             if prediction[0] == 'clean' and test_y[0] == 'clean':

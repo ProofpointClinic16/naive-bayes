@@ -16,13 +16,15 @@ def test(filename="all_data.txt", size=1000, type="url"):
     data_frame = DataFrame(trainingSet)
 
     analyze = "char"
+    n_range = (4, 4)
     if type == "ip":
         analyze = "word"
+        n_range = (2, 2)
 
-    pipeline = Pipeline([('vectorizer',  CountVectorizer(analyzer=analyze, ngram_range = (2,4))),
+    pipeline = Pipeline([('vectorizer',  CountVectorizer(analyzer=analyze, ngram_range=n_range)),
                          ('classifier',  MultinomialNB()) ])
 
-    k_fold = KFold(n_splits=2)
+    k_fold = KFold(n_splits=6)
     scores = []
     accuracies = []
     confusion = numpy.array([[0, 0], [0, 0]])
@@ -65,7 +67,7 @@ def test(filename="all_data.txt", size=1000, type="url"):
     print "True positives: " + str(mal_mal) + " (" + "{:.1%}".format(true_positive/mal) + " of all malicious samples)"
     print "False negatives: " + str(clean_mal) + " (" + "{:.1%}".format(false_negative/mal) + " of all malicious samples)"
     print "True negatives: " + str(clean_clean) + " (" + "{:.1%}".format(true_negative/clean) + " of all clean samples)"
-    print "False positives: " + str(mal_clean) + " (" + "{:.1%}".format(false_positive/clean) + " of all cleansamples)"
+    print "False positives: " + str(mal_clean) + " (" + "{:.1%}".format(false_positive/clean) + " of all clean samples)"
 
 
 def test_all(type="url"):
