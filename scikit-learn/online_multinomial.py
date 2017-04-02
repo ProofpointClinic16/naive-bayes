@@ -68,7 +68,7 @@ def test_fixed(filename="all_data.txt", size=137000, type="url", mal_num=500, it
 
             prob = pipeline.predict_proba(test_text)
 
-            print prob[0][0], prediction[0]
+            # print prob[0][0], prediction[0]
 
             # Keep track of how good it was overall as well as this iteration
             if prediction[0] == 'clean' and test_y[0] == 'clean':
